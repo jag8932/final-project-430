@@ -7,14 +7,13 @@ const loginPage = (req, res) => res.render('login');
 const signupPage = (req, res) => res.render('signup');
 
 const logout = (req, res) => {
-    req.session.destroy();
-    res.redirect('/')
+  req.session.destroy();
+  res.redirect('/');
 };
 
 const login = (req, res) => {
   const username = `${req.body.username}`;
   const pass = `${req.body.pass}`;
-  let account = req.session;
 
   if (!username || !pass) {
     return res.status(400).json({ error: 'All fields are required!' });
