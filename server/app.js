@@ -8,6 +8,9 @@ const mongoose = require('mongoose');
 const expressHandlebars = require('express-handlebars');
 const helmet = require('helmet');
 const session = require('express-session');
+const RedisStore = require('connect-redis')(session);
+const redis = require('redis');
+const csrf = require('csurf');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
@@ -21,6 +24,13 @@ mongoose.connect(dbURL, (err) => {
   }
 });
 
+const redisURL = process.env.REDISCLOUD_URL ||
+'redis://default:1ZH4m5yafuBSOfyZMEKOsQtm0e4Cv57m@redis-10855.c99.us-east-1-4.ec2.cloud.redislabs.com:10855';
+let redisClient = redis.createClient({
+  legacyMode: true,
+  url: redisURL,
+});
+redisClient.connect().catch(console.error);
 // Pull in our routes
 const router = require('./router.js');
 
@@ -38,14 +48,27 @@ app.use(bodyParser.json());
 
 app.use(session({
   key: 'sessionid',
+  store: new RedisStore({
+    client: redisClient,
+  }),
   secret: 'Domo Arigato',
   resave: true,
   saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+  },
 }));
 app.engine('handlebars', expressHandlebars.engine({ defaultLayout: '' }));
 app.set('view engine', 'handlebars');
 app.set('views', `${__dirname}/../views`);
 app.use(cookieParser());
+
+app.use(csrf());
+app.use((err, req, res, next) => {
+  if (err.code !== 'EBADCSRFTOKEN') return next(err);
+  console.log('Missing CSRF token!');
+  return false;
+})
 
 router(app);
 
