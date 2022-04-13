@@ -47,7 +47,7 @@ const DomoList = (props) => {
 
     const domoNodes = props.domos.map(domo => {
         return (
-            <div key={domo._id} className="domo">
+            <div key={domo._id} className="domo" onClick={likeDomo}>
                 <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
                 <h3 className="domoName">Name: {domo.name}</h3>
                 <h3 className="domoAge">Age {domo.age}</h3>
@@ -59,7 +59,7 @@ const DomoList = (props) => {
         <div className="domoList">
             {domoNodes}
         </div>
-    );
+    ); 
 }
 
 const loadDomosFromServer = async () => {
@@ -71,6 +71,9 @@ const loadDomosFromServer = async () => {
     );
 }
 
+const likeDomo = () => {
+    console.log("Domo Liked");
+}
 const init = async () => {
     const response = await fetch('/getToken');
     const data = await response.json();
@@ -86,6 +89,7 @@ const init = async () => {
     );
 
     loadDomosFromServer();
+
 }
 
 window.onload = init;
