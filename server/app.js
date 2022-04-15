@@ -14,12 +14,12 @@ const csrf = require('csurf');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/DomoMaker';
+const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/AirFare';
 
 // const dbURL = 'mongodb+srv://jacobUser:jacobPassword0@cluster0.tzvux.mongodb.net/DomoMaker';
 mongoose.connect(dbURL, (err) => {
   if (err) {
-    //   console.log('Could not connect to database');
+    console.log('Could not connect to database');
     throw err;
   }
 });
@@ -42,7 +42,7 @@ app.use(helmet({
   contentSecurityPolicy: false,
 }));
 app.use('/assets', express.static(path.resolve(`${__dirname}/../hosted/`)));
-app.use(favicon(`${__dirname}/../hosted/img/favicon.png`));
+app.use(favicon(`${__dirname}/../hosted/img/plane.png`));
 app.use(compression());
 app.use(bodyParser.urlencoded({
   extended: true,
@@ -54,7 +54,7 @@ app.use(session({
   store: new RedisStore({
     client: redisClient,
   }),
-  secret: 'Domo Arigato',
+  secret: 'Sky High',
   resave: true,
   saveUninitialized: true,
   cookie: {
@@ -79,5 +79,5 @@ app.listen(port, (err) => {
   if (err) {
     throw err;
   }
-  // console.log(`Listening on port ${port}`);
+  console.log(`Listening on port ${port}`);
 });

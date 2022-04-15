@@ -29,7 +29,7 @@ const login = (req, res) => {
     }
 
     req.session.account = Account.toAPI(account);
-    return res.json({ redirect: '/maker' });
+    return res.json({ redirect: '/searchFlights' });
   });
 };
 

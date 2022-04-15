@@ -1,6 +1,5 @@
 const handleError = (message) => {
-    document.getElementById('errorMessage').textContent = message;
-    document.getElementById('domoMessage').classList.remove('hidden');
+  alert(message);
   };
 
 const sendPost = async (url, data, handler) => {
