@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     entry: {
-        app: './client/ticketBrowse.jsx',
+        app: './client/market.jsx',
         login: './client/login.jsx',
     },
     module: {

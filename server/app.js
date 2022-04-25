@@ -14,7 +14,7 @@ const csrf = require('csurf');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/AirFare';
+const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/Ufare';
 
 // const dbURL = 'mongodb+srv://jacobUser:jacobPassword0@cluster0.tzvux.mongodb.net/DomoMaker';
 mongoose.connect(dbURL, (err) => {
@@ -24,9 +24,9 @@ mongoose.connect(dbURL, (err) => {
   }
 });
 
-const redisURL = process.env.REDISCLOUD_URL ||
-'redis://default:1ZH4m5yafuBSOfyZMEKOsQtm0e4Cv57m@redis-10855.c99.us-east-1-4.ec2.cloud.redislabs.com:10855';
-let redisClient = redis.createClient({
+const redisURL = process.env.REDISCLOUD_URL
+|| 'redis://default:1ZH4m5yafuBSOfyZMEKOsQtm0e4Cv57m@redis-10855.c99.us-east-1-4.ec2.cloud.redislabs.com:10855';
+const redisClient = redis.createClient({
   legacyMode: true,
   url: redisURL,
 });
@@ -42,7 +42,7 @@ app.use(helmet({
   contentSecurityPolicy: false,
 }));
 app.use('/assets', express.static(path.resolve(`${__dirname}/../hosted/`)));
-app.use(favicon(`${__dirname}/../hosted/img/plane.png`));
+app.use(favicon(`${__dirname}/../hosted/img/shopping-cart.png`));
 app.use(compression());
 app.use(bodyParser.urlencoded({
   extended: true,
@@ -71,7 +71,7 @@ app.use((err, req, res, next) => {
   if (err.code !== 'EBADCSRFTOKEN') return next(err);
   console.log('Missing CSRF token!');
   return false;
-})
+});
 
 router(app);
 

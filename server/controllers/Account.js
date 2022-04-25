@@ -3,11 +3,11 @@ const models = require('../models');
 const { Account } = models;
 
 const loginPage = (req, res) => {
-  res.render('login', {csrfToken: req.csrfToken()});
+  res.render('login', { csrfToken: req.csrfToken() });
 };
 
 const signupPage = (req, res) => {
-  res.render('signup', { csrfToken: req.csrfToken()});
+  res.render('signup', { csrfToken: req.csrfToken() });
 };
 
 const logout = (req, res) => {
@@ -29,7 +29,7 @@ const login = (req, res) => {
     }
 
     req.session.account = Account.toAPI(account);
-    return res.json({ redirect: '/searchFlights' });
+    return res.json({ redirect: '/market' });
   });
 };
 
@@ -48,10 +48,12 @@ const signup = async (req, res) => {
 
   try {
     const hash = await Account.generateHash(pass);
-    const newAccount = new Account({ username, password: hash });
+    const newAccount = new Account({
+      username, password: hash, products: [], isPremium: false,
+    });
     await newAccount.save();
     req.session.account = Account.toAPI(newAccount);
-    return res.json({ redirect: '/maker' });
+    return res.json({ redirect: '/market' });
   } catch (err) {
     console.log(err);
     if (err.code === 11000) {
@@ -61,9 +63,7 @@ const signup = async (req, res) => {
   }
 };
 
-const getToken = (req, res) => {
-  return res.json({csrfToken: req.csrfToken()});
-}
+const getToken = (req, res) => res.json({ csrfToken: req.csrfToken() });
 module.exports = {
   loginPage,
   signupPage,

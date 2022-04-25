@@ -1,12 +1,12 @@
-
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
-
 
 const saltRounds = 10;
 
 let AccountModel = {};
 
+// The account schema is updated to have products. All accounts will have
+// access to the products they are selling on the market. Products must be objects.
 const AccountSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -23,13 +23,17 @@ const AccountSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  products: [Object],
+  isPremium: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 AccountSchema.statics.toAPI = (doc) => ({
   username: doc.username,
   _id: doc._id,
 });
-
 
 AccountSchema.statics.generateHash = (password) => bcrypt.hash(password, saltRounds);
 
