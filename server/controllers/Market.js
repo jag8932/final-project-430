@@ -3,8 +3,9 @@ const ProductModel = require('../models/Product');
 
 const { Product } = models;
 
-const searchPage = (req, res) => res.render('app');
+const marketPage = (req, res) => res.render('app');
 
+const redirectPage = (req, res) => res.render('redirect');
 // Create product function
 
 const createProduct = async (req, res) => {
@@ -56,7 +57,8 @@ const searchProduct = async (req, res) => {
 };
 // Buy product/add to shopping cart
 module.exports = {
-  searchPage,
+  marketPage,
+  redirectPage,
   createProduct,
   searchProduct,
   getProducts,

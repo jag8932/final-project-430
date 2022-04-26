@@ -1,5 +1,7 @@
 const controllers = require('./controllers');
 const mid = require('./middleware');
+const path = require('path');
+let redirectPath = path.join(__dirname, '/views/redirect.handlebars');
 
 const router = (app) => {
   app.get('/getToken', mid.requiresSecure, controllers.Account.getToken);
@@ -16,12 +18,13 @@ const router = (app) => {
 
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
 
-  app.get('/market', mid.requiresLogin, controllers.Market.searchPage);
+  app.get('/market', mid.requiresLogin, controllers.Market.marketPage);
 
   // app.get('/maker', mid.requiresLogin,controllers.Domo.makerPage);
   // app.post('/maker', mid.requiresLogin,controllers.Domo.makeDomo);
 
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
+  app.get('*', controllers.Market.redirectPage);
 };
 
 module.exports = router;

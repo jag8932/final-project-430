@@ -1,7 +1,5 @@
 const helper = require('./helper.js');
 
-// Helper functions
-
 const createProduct = (e) => {
     e.preventDefault();
 
@@ -15,17 +13,16 @@ const createProduct = (e) => {
       }
 
       helper.sendPost(e.target.action, {name, description, _csrf}, () => {console.log("Product Created!")});
-      return false;
-  }
-
-
+      location.reload();
+}
 // Components
 
 // User gives a name and a description and the server detects who is creating the product
-const CreateProduct = (props) => {
+const CreateProduct = (fields) => {
+    console.log(fields.props.props);
     return (
         <div>
-            <h1>Welcome to the market.</h1>
+            <h1>Create Your Product</h1>
             <form id="productForm"
              onSubmit={createProduct}
              name="productForm"
@@ -37,23 +34,23 @@ const CreateProduct = (props) => {
             <input id="productName" name="name" type="text" placeholder="Product Name" />
             <label htmlFor="description">Description:</label>
             <input id="productDescription" name="description" type="text" />
-            <input id="_csrf" type="hidden" name="_csrf" value={props.csrf} />
+            <input id="_csrf" type="hidden" name="_csrf" value={fields.props.props.data.csrfToken} />
             <input className="createProductSubmit" type="submit" value="Create Product"/>
             </form>
         </div>
     )
 }
+
 //Code is borrowed from the homeworks
-const ProductList = (props) => {
-    if (props.products.length === 0) {
+const ProductList = (fields) => {
+    if (fields.props.products.length === 0) {
         return (
             <div>
                 <h3 className="emptyMarket">The marketplace is empty. Fix that by selling something!</h3>
             </div>
         );
     }
-
-    const productItems = props.products.map(product => {
+    const productItems = fields.props.products.map(product => {
         return (
             <div key={product._id} className="col" >
                 <img src="/assets/img/shopping-cart.png" alt="featured product" width="50px" className="productImage" />
@@ -62,7 +59,6 @@ const ProductList = (props) => {
             </div>
         );
     });
-
     return (
         <div className="domoList">
             {productItems}
@@ -71,6 +67,7 @@ const ProductList = (props) => {
 }
 
   // Borrowed from homework to load products.
+  /*
   const loadProducts = async () => {
     const response = await fetch('/getProducts');
     const data = await response.json();
@@ -81,6 +78,12 @@ const ProductList = (props) => {
             document.getElementById('market')
         );
     }
+  } */
+
+  const loadProducts = async () => {
+    const response = await fetch('/getProducts');
+    const data = await response.json();
+    return data;
   }
 
 const SearchBar = () => {
@@ -119,23 +122,51 @@ const SearchBar = () => {
             </div>
             </div>
             </form>
-            <div id="showResults"></div>
         </div>
     )
 }
-/*
-const Main = (props) => {
-    const result = React.useState();
-    
-} */
+
+const MainComponent = (fields) => {
+    //We need a way of switching between viewing the market and creating a product.
+    //These react hooks will determine what is currently rendered and what is not.
+    const [loadproducts, setLoadProducts] = React.useState(true);
+    const [createproducts, setCreateProducts] = React.useState(false);
+
+    if (loadproducts) {
+      return (
+          <div>
+              <button id="create-product" onClick={()=> {
+                  setLoadProducts(false);
+                  setCreateProducts(true);
+              }}>Create Product</button>
+              <ProductList props={fields.props}/>
+          </div>
+      )
+    }
+    if (createproducts) {
+      return (
+        <div>
+          <button id="marketplace" onClick={()=> {
+              setLoadProducts(true);
+              setCreateProducts(false);
+          }}>To Marketplace</button>
+          <CreateProduct props={fields}/>
+        </div>
+      )
+    }
+
+}
+
 const init = async () => {
     const response = await fetch('/getToken');
     const data = await response.json();
-
-    ReactDOM.render(<SearchBar/>, document.querySelector('.searchBar'));
- //   ReactDOM.render(<CreateProduct csrf={data.csrfToken}/>, document.getElementById('market'));
-    loadProducts();
-    //ReactDOM.render(<Main />, document.getElementById('bottomPage'));
+    const products = await loadProducts();
+    const obj = {
+        data,
+        products
+    }
+    ReactDOM.render(<MainComponent props={obj}/>, document.getElementById('main'));
+    ReactDOM.render(<SearchBar />, document.querySelector('.searchBar'));
 }
 
 window.onload = init;

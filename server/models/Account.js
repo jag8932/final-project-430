@@ -24,6 +24,7 @@ const AccountSchema = new mongoose.Schema({
     default: Date.now,
   },
   products: [Object],
+  shoppingCart: [Object],
   isPremium: {
     type: Boolean,
     required: true,
