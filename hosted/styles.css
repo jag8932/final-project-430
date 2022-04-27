@@ -1,15 +1,21 @@
-
+:root {
+    --buttonVisible: hidden;
+}
 nav {
     background-color:aliceblue;
 }
 
+textarea {
+    width: 600px;
+    height: 250px;
+}
 .col-sm {
     margin-left: 10px;
 }
 .searchInputContainer {
     background-color: white;
     margin-top: 10px;
-    border: 2px solid black;
+    border: 2px solid coral;
     border-radius: 10px;
     display: flex;
     flex-direction: row;
@@ -61,18 +67,83 @@ nav {
     width: 100%;
 }
 
+.productList {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    border: 1px solid orange;
+    border-radius: 1px;
+    padding-top: 2%;
+}
+.marketItem {
+    width: 300px;
+    height: 300px;
+    margin: 2%;
+    text-align: center;
+}
+.marketItem:hover {
+    border: 1px solid lightblue;
+    --buttonVisible: visible;
+}
+.addToCart {
+    visibility: var(--buttonVisible);
+    border: none;
+    border-radius: 5%;
+}
 #marketplace {
     background: black;
     color: white;
     border:none;
-    border-radius: 20px 0px 0px 20px;
-    margin-bottom: 5%;
+    border-radius: 20px 20px 0px 0px;
 }
 
 #create-product {
-    background: orange;
+    background: skyblue;
     color: white;
     border: none;
-    border-radius: 0px 20px 20px 0px;
-    margin-bottom: 5%;
+    border-radius: 20px 20px 0px 0px;
+    
+}
+
+#load-user {
+    background: coral;
+    color: white;
+    border:none;
+    border-radius: 20px 20px 0px 0px;
+}
+.productForm {
+    margin-top: 10%;
+}
+#productFormTitle {
+    margin-top: 5%;
+}
+
+.linkButton {
+    padding: 10px;
+    background-color:coral;
+    color: white;
+    text-decoration: none;
+}
+
+.linkButton:hover {
+    background-color: rgba(255, 127, 80, 0.678);
+    color: white;
+}
+
+.formSubmit {
+    background-color:coral;
+    color: white;
+    text-decoration: none;
+    border: none;
+    padding: 5px;
+}
+.formSubmit:hover {
+    background-color: rgba(255, 127, 80, 0.678);
+}
+
+.premium button{
+    background-color: coral;
+    color: white;
+    border: none;
+    padding: 10px;
 }
