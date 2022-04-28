@@ -119,10 +119,13 @@ textarea {
 }
 
 .linkButton {
-    padding: 10px;
+    height: 30px;
+    padding: 5px;
+    text-align:center;
     background-color:coral;
     color: white;
     text-decoration: none;
+    border: none;
 }
 
 .linkButton:hover {
@@ -141,9 +144,11 @@ textarea {
     background-color: rgba(255, 127, 80, 0.678);
 }
 
-.premium button{
-    background-color: coral;
-    color: white;
-    border: none;
-    padding: 10px;
+
+#pwordChange {
+    visibility: hidden;
+}
+
+#pwordChangeButton {
+    visibility: visible;
 }

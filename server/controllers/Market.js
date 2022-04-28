@@ -1,8 +1,6 @@
 const models = require('../models');
-const ProductModel = require('../models/Product');
 
 const { Product } = models;
-const { Account } = models;
 
 const marketPage = (req, res) => res.render('app');
 
@@ -21,9 +19,6 @@ const createProduct = async (req, res) => {
       userId: req.session.account._id,
     });
 
-    // Code to add product to the user's product list
-    const user = await Account.find({ _id: req.session.account._id });
-  
     return res.status(201).json(product);
   } catch (error) {
     return res.status(400).json({ error: 'An error occured' });
@@ -32,11 +27,10 @@ const createProduct = async (req, res) => {
 // Delete product function
 const deleteProduct = async (req, res) => {
   try {
-
-    Product.findOneAndRemove({_id: req.query.id}, () => {
-      console.log(`Product was deleted.`);
+    Product.findOneAndRemove({ _id: req.query.id }, () => {
+      console.log('Product was deleted.');
     });
-    return res.status(200).json({redirect: '/'});
+    return res.status(200).json({ redirect: '/' });
   } catch (error) {
     return res.status(400).json({ error });
   }
@@ -53,22 +47,18 @@ const getProducts = async (req, res) => {
 
 const getUserProducts = async (req, res) => {
   try {
-    const userProducts = await Product.find({userId: req.session.account._id});
+    const userProducts = await Product.find({ userId: req.session.account._id });
     return res.status(201).json(userProducts);
-     
   } catch (error) {
-    return res.status(400).json({error: 'An error occured'});
+    return res.status(400).json({ error: 'An error occured' });
   }
-}
-// Update product function
+};
 
 // Search product function
 const searchProduct = async (req, res) => {
   try {
-    console.log(req.query);
-    const find = await Product.exists({ name: req.query.search });
-    console.log(find);
-    return res.status(201).json(find);
+    const products = await Product.find({ name: req.query.search });
+    return res.status(201).json(products);
   } catch (error) {
     return res.status(400).json({ error });
   }

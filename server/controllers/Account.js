@@ -63,37 +63,42 @@ const signup = async (req, res) => {
   }
 };
 // Upgrades premium status of user to true
-const upgradeToPremium = async(req, res) => {
+const upgradeToPremium = async (req, res) => {
   try {
-    const updateAccount = await Account.findOneAndUpdate({_id: req.session.account._id}, {isPremium: true});
-    //const updateAccount = await Account.find({_id: req.session.account._id});
+    const updateAccount = await Account.findOneAndUpdate(
+      { _id: req.session.account._id },
+      { isPremium: true },
+    );
     return res.status(200).json(updateAccount);
   } catch (error) {
     console.log(error);
-    return res.status(400).json({error: 'An error occured'});
+    return res.status(400).json({ error: 'An error occured' });
   }
-}
+};
 // Upgrades premium status of user to false
-const downgradeFromPremium = async(req, res) => {
+const downgradeFromPremium = async (req, res) => {
   try {
-    const updateAccount = await Account.findOneAndUpdate({_id: req.session.account._id}, {isPremium: false});
+    const updateAccount = await Account.findOneAndUpdate(
+      { _id: req.session.account._id },
+      { isPremium: false },
+    );
     return res.status(200).json(updateAccount);
   } catch (error) {
     console.log(error);
-    return res.status(400).json({error: 'An error occured'});
+    return res.status(400).json({ error: 'An error occured' });
   }
-}
+};
 
-const getAccountDetails = async(req, res) => {
+const getAccountDetails = async (req, res) => {
   try {
-    const user = await Account.find({_id: req.session.account._id});
+    const user = await Account.find({ _id: req.session.account._id });
     return res.status(200).json(user);
   } catch (error) {
     console.log(error);
-    return res.status(400).json({error: 'An error occured'});
+    return res.status(400).json({ error: 'An error occured' });
   }
-}
- 
+};
+
 const getToken = (req, res) => res.json({ csrfToken: req.csrfToken() });
 module.exports = {
   loginPage,
@@ -105,4 +110,5 @@ module.exports = {
   upgradeToPremium,
   downgradeFromPremium,
   getAccountDetails,
+  // changePassword,
 };

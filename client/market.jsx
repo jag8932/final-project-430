@@ -1,5 +1,4 @@
 const helper = require('./helper.js');
-//import 'bootstrap';
 
 // Helpers
 // Code is borrowed from the homeworks since creating a product requires some similar features.
@@ -17,6 +16,22 @@ const createProduct = (e) => {
 
       helper.sendPost(e.target.action, {name, description, _csrf}, () => {console.log("Product Created!")});
       location.reload();
+}
+
+// Helper to change password
+const changePasswordHelper = (e) => {
+    e.preventDefault();
+
+    const oldPword = e.target.querySelector('#oldPword').value;
+    const newPword = e.target.querySelector('#newPword').value;
+    const _csrf = e.target.querySelector('#_csrf').value;
+
+    if (!oldPword || !newPword) {
+        helper.handleError("Please enter your old password and new password.");
+        return false;
+    }
+
+    helper.sendPost(e.target.action, {oldPword, newPword, _csrf}, ()=> {console.log("Password updated")});
 }
 
 // Components
@@ -61,9 +76,9 @@ const ProductList = (fields) => {
             <div key={product._id} className="marketItem" >
                 <img src="/assets/img/shopping-cart.png" alt="featured product" width="50px" className="productImage" />
                 <h2 className="productName">{product.name}</h2>
-                <h3 className="productCreator">{product.user}</h3>
+                <h3 className="productCreator">By {product.user}</h3>
+                <h4 className="productDescription">{product.description}</h4>
                 <button className="addToCart" onClick={()=> {
-                    console.log(product);
                     helper.sendPost('addToCart', {product}, () => console.log("Added to cart!"));
                 }}>Add To Cart</button>
             </div>
@@ -83,32 +98,19 @@ const ProductList = (fields) => {
     return data;
   }
 
-
+const searchProduct = async (e) => {
+    e.preventDefault();
+    const search = e.target.querySelector('#searchInput').value;
+    if (search) {
+        if (search.length < 1) {
+            helper.handleError("Must search for an actual product.");
+        } 
+        const result = await fetch(`searchFor/?search=${search}`).then(response => response.json()).then(data=> console.log(data));
+        return result;
+    }   
+}
   //Search bar will allow you to look up products by name
 const SearchBar = () => {
-    const searchProduct = async (e) => {
-        e.preventDefault();
-
-        const search = e.target.querySelector('#searchInput').value;
-        if (search) {
-            if (search.length < 1) {
-                helper.handleError("Must search for an actual product.");
-            } 
-        const result = await fetch(`searchFor/?search=${search}`)
-                .then(response => response.json());
-        console.log(result);
-        if (result) {
-            return (
-                <div>Test</div>
-            )
-        } else {
-            return (
-                <div>We couldn't find anything by that name.</div>
-            )
-        }
-        }
-    }
-
     return (
         <div className="search">
             <form id="searchForm"
@@ -135,6 +137,7 @@ const deleteProduct = async (params) => {
     const deleteData = await fetch(`/deleteProduct/?id=${params}`);
     const data = deleteData.json();
     console.log(data);
+    location.reload();
     return null;
 }
 // Loads the user's products
@@ -180,7 +183,7 @@ const GoPremium = () => {
     if (!handlePremium) {
         return (
             <div>
-                <button onClick={async() => {
+                <button className="linkButton" onClick={async() => {
                     upgrade();
                 }}>Upgrade to Premium</button>
             </div>
@@ -189,12 +192,39 @@ const GoPremium = () => {
     if (handlePremium) {
         return (
             <div>
-                <button onClick={async() => {
+                <button className="linkButton" onClick={async() => {
                     downgrade();         
                 }}>Cancel Plan</button>
             </div>
         )
     }
+}
+// Form to change user password
+const ChangePassword = (props) => {
+    return (    
+    <form id="pwordChange"
+    onSubmit={changePasswordHelper}
+    name="changeForm"
+    action="/changePassword"
+    method="POST"
+    className="pwordChangeForm"
+    >
+    <label>Enter old password: </label>
+    <input id="oldPword" type="text"></input>
+    <label>Enter new password: </label>
+    <input id="newPword" type="text"></input>
+    <input id="_csrf" type="hidden" name="_csrf" value={props.csrf} />
+    <input className="changePasswordSubmit" type="submit" value="Change Password"/>
+    </form>
+    )
+
+}
+
+// Does nothing, is just for show
+const ChangePasswordButton = () => {
+    return (
+        <button className="linkButton" id="pwordChangeButton">Password</button>
+    )
 }
 // The main component handles what the user sees below the nav bar. 
 const MainComponent = (fields) => {
@@ -203,6 +233,7 @@ const MainComponent = (fields) => {
     const [loadproducts, setLoadProducts] = React.useState(true);
     const [createproducts, setCreateProducts] = React.useState(false);
     const [showuserproducts, setUser] = React.useState(false);
+    const [showSearchResults, setResults] = React.useState(false);
 
     if (loadproducts) {
       return (
@@ -210,11 +241,13 @@ const MainComponent = (fields) => {
               <button id="create-product" onClick={()=> {
                   setLoadProducts(false);
                   setCreateProducts(true);
+                  setResults(false);
               }}>Create Product</button>
               <button id="load-user" onClick={() => {
                 setUser(true);
                 setLoadProducts(false);
                 setCreateProducts(false);
+                setResults(false);
               }}>Your Products</button>
               <ProductList props={fields.props}/>
           </div>
@@ -226,11 +259,13 @@ const MainComponent = (fields) => {
           <button id="marketplace" onClick={()=> {
               setLoadProducts(true);
               setCreateProducts(false);
+              setResults(false);
           }}>To Marketplace</button>
          <button id="load-user" onClick={() => {
                 setUser(true);
                 setLoadProducts(false);
                 setCreateProducts(false);
+                setResults(false);
               }}>Your Products</button>
           <CreateProduct props={fields}/>
         </div>
@@ -243,17 +278,36 @@ const MainComponent = (fields) => {
                   setLoadProducts(false);
                   setCreateProducts(true);
                   setUser(false);
+                  setResults(false);
               }}>Create Product</button>
             <button id="marketplace" onClick={()=> {
               setLoadProducts(true);
               setCreateProducts(false);
               setUser(false);
+              setResults(false);
              }}>To Marketplace</button>
 
            <h1>Your products</h1>
              <UserProducts props={fields}/>
             </div>
         )
+    }
+    if (showSearchResults) {
+        setLoadProducts(false);
+        setCreateProducts(false);
+        setUser(false);
+        searchResults.map(result => {
+            return (
+                <div key={result._id} className='marketItem'>
+                <h1>{result.name}</h1>
+                <h2>By {result.name}</h2>
+                <h3>{result.description}</h3>
+                <button className="addToCart" onClick={()=> {
+                    helper.sendPost('addToCart', {product}, () => console.log("Added to cart!"));
+                }}>Add To Cart</button>
+                </div>
+            )
+        });
     }
 
 }
@@ -271,9 +325,12 @@ const init = async () => {
         userProducts
     }
     
+    
     ReactDOM.render(<MainComponent props={obj}/>, document.getElementById('main'));
     ReactDOM.render(<SearchBar />, document.querySelector('.searchBar'));
     ReactDOM.render(<GoPremium />, document.querySelector('.premium'));
+    ReactDOM.render(<ChangePassword csrf={data.csrfToken}/>, document.querySelector('.passwordChange'));
+    ReactDOM.render(<ChangePasswordButton/>, document.querySelector('.passwordChange'));
 }
 
 window.onload = init;

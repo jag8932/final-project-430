@@ -20,7 +20,7 @@ const requiresSecure = (req, res, next) => {
   return next();
 };
 
-const bypassSecure = (req, res, next) => { //eslint-disable-line
+const bypassSecure = (req, res, next) => {
   next();
 };
 

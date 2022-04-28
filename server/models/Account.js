@@ -38,6 +38,20 @@ AccountSchema.statics.toAPI = (doc) => ({
 
 AccountSchema.statics.generateHash = (password) => bcrypt.hash(password, saltRounds);
 
+AccountSchema.statics.validatePassword = async (username, oldpassword) => {
+  try {
+    const doc = await AccountModel.findOne({ username }).exec();
+
+    const match = await bcrypt.compare(oldpassword, doc.password);
+    if (match) {
+      return true;
+    }
+    return false;
+  } catch (err) {
+    return console.log(err);
+  }
+};
+
 AccountSchema.statics.authenticate = async (username, password, callback) => {
   try {
     const doc = await AccountModel.findOne({ username }).exec();
